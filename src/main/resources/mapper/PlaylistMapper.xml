@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.musicplayer.mapper.PlaylistMapper">
+    
+    <resultMap id="playlistMap" type="com.musicplayer.model.Playlist">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="userId" column="user_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="songs" ofType="com.musicplayer.model.Song">
+            <id property="id" column="song_id"/>
+            <result property="title" column="song_title"/>
+            <result property="artist" column="song_artist"/>
+            <result property="album" column="song_album"/>
+            <result property="duration" column="song_duration"/>
+            <result property="filePath" column="song_file_path"/>
+            <result property="fileName" column="song_file_name"/>
+            <result property="fileType" column="song_file_type"/>
+            <result property="fileSize" column="song_file_size"/>
+            <result property="uploadTime" column="song_upload_time"/>
+            <result property="genre" column="song_genre"/>
+            <result property="coverImagePath" column="song_cover_image_path"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByUserId" resultMap="playlistMap">
+        SELECT p.*, s.id as song_id, s.title as song_title, s.artist as song_artist,
+               s.album as song_album, s.duration as song_duration, s.file_path as song_file_path,
+               s.file_name as song_file_name, s.file_type as song_file_type, s.file_size as song_file_size,
+               s.upload_time as song_upload_time, s.genre as song_genre, s.cover_image_path as song_cover_image_path
+        FROM playlists p
+        LEFT JOIN playlist_songs ps ON p.id = ps.playlist_id
+        LEFT JOIN songs s ON ps.song_id = s.id
+        WHERE p.user_id = #{userId}
+    </select>
+
+    <select id="findById" resultMap="playlistMap">
+        SELECT p.*, s.id as song_id, s.title as song_title, s.artist as song_artist,
+               s.album as song_album, s.duration as song_duration, s.file_path as song_file_path,
+               s.file_name as song_file_name, s.file_type as song_file_type, s.file_size as song_file_size,
+               s.upload_time as song_upload_time, s.genre as song_genre, s.cover_image_path as song_cover_image_path
+        FROM playlists p
+        LEFT JOIN playlist_songs ps ON p.id = ps.playlist_id
+        LEFT JOIN songs s ON ps.song_id = s.id
+        WHERE p.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.musicplayer.model.Playlist" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO playlists (name, description, user_id, created_at, updated_at)
+        VALUES (#{name}, #{description}, #{userId}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.musicplayer.model.Playlist">
+        UPDATE playlists
+        SET name = #{name},
+            description = #{description},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM playlists WHERE id = #{id}
+    </delete>
+
+    <insert id="addSongToPlaylist">
+        INSERT INTO playlist_songs (playlist_id, song_id)
+        VALUES (#{playlistId}, #{songId})
+    </insert>
+
+    <delete id="removeSongFromPlaylist">
+        DELETE FROM playlist_songs
+        WHERE playlist_id = #{playlistId} AND song_id = #{songId}
+    </delete>
+
+    <select id="findAll" resultMap="playlistMap">
+        SELECT p.*, s.id as song_id, s.title as song_title, s.artist as song_artist,
+               s.album as song_album, s.duration as song_duration, s.file_path as song_file_path,
+               s.file_name as song_file_name, s.file_type as song_file_type, s.file_size as song_file_size,
+               s.upload_time as song_upload_time, s.genre as song_genre, s.cover_image_path as song_cover_image_path
+        FROM playlists p
+                 LEFT JOIN playlist_songs ps ON p.id = ps.playlist_id
+                 LEFT JOIN songs s ON ps.song_id = s.id
+    </select>
+</mapper> 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.musicplayer.mapper.SongMapper">
+    
+    <resultMap id="songMap" type="com.musicplayer.model.Song">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="artist" column="artist"/>
+        <result property="album" column="album"/>
+        <result property="duration" column="duration"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="genre" column="genre"/>
+        <result property="coverImagePath" column="cover_image_path"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="songMap">
+        SELECT * FROM songs
+    </select>
+
+    <select id="findById" resultMap="songMap">
+        SELECT * FROM songs WHERE id = #{id}
+    </select>
+
+    <select id="findByTitle" resultMap="songMap">
+        SELECT * FROM songs WHERE title LIKE CONCAT('%', #{title}, '%')
+    </select>
+
+    <select id="findByArtist" resultMap="songMap">
+        SELECT * FROM songs WHERE artist LIKE CONCAT('%', #{artist}, '%')
+    </select>
+
+    <select id="findByGenre" resultMap="songMap">
+        SELECT * FROM songs WHERE genre = #{genre}
+    </select>
+
+    <insert id="insert" parameterType="com.musicplayer.model.Song" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO songs (title, artist, album, duration, file_path, file_name, file_type, 
+                          file_size, upload_time, genre, cover_image_path, created_at, updated_at)
+        VALUES (#{title}, #{artist}, #{album}, #{duration}, #{filePath}, #{fileName}, #{fileType},
+                #{fileSize}, #{uploadTime}, #{genre}, #{coverImagePath}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.musicplayer.model.Song">
+        UPDATE songs
+        SET title = #{title},
+            artist = #{artist},
+            album = #{album},
+            duration = #{duration},
+            file_path = #{filePath},
+            file_name = #{fileName},
+            file_type = #{fileType},
+            file_size = #{fileSize},
+            upload_time = #{uploadTime},
+            genre = #{genre},
+            cover_image_path = #{coverImagePath},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM songs WHERE id = #{id}
+    </delete>
+</mapper> 
